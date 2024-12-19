@@ -1,0 +1,37 @@
+[
+    {
+      "id": "1",
+      "title": "Sample Quiz 1",
+      "description": "This is a sample quiz for demonstration purposes.",
+      "questions": [
+        {
+          "question": "What is 2 + 2?",
+          "options": ["3", "4", "5"],
+          "correctAnswer": "4"
+        },
+        {
+          "question": "What is the capital of France?",
+          "options": ["Berlin", "Madrid", "Paris"],
+          "correctAnswer": "Paris"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Sample Quiz 2",
+      "description": "Another sample quiz for testing.",
+      "questions": [
+        {
+          "question": "What is 5 + 3?",
+          "options": ["7", "8", "9"],
+          "correctAnswer": "8"
+        },
+        {
+          "question": "What is the capital of Japan?",
+          "options": ["Tokyo", "Seoul", "Beijing"],
+          "correctAnswer": "Tokyo"
+        }
+      ]
+    }
+  ]
+  

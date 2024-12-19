@@ -67,7 +67,7 @@ export function Login() {
           if (email.includes('saveetha.in')) {
             navigate('/createQuiz');  // Redirect to createQuiz route
           } else {
-            navigate('/takequiz');  // Redirect to takequiz route
+            navigate('/user');  // Redirect to takequiz route
           }
         }, 1500); // Redirect after success message shows for 1.5 seconds
       } else {

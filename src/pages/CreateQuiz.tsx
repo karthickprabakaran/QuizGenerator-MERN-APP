@@ -82,9 +82,10 @@ export function CreateQuiz() {
     // Confirm quiz is added
     console.log('Quiz added to store:', newQuiz);
   
-    // Redirect to home page
-    navigate('/takequiz');
+    // Redirect to the Take Quizzes page
+    navigate('/take-quizzes');
   };
+  
   
 
   return (
