@@ -9,6 +9,7 @@ import { CreateQuiz } from './pages/CreateQuiz';
 import { TakeQuiz } from './pages/TakeQuiz';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />
+          <Route path="profile" element={<Profile />} />
+
           <Route
             path="profile"
             element={

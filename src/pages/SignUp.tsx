@@ -5,21 +5,52 @@ import { AuthLayout } from '../components/auth/AuthLayout';
 import { FormInput } from '../components/auth/FormInput';
 import { SubmitButton } from '../components/auth/SubmitButton';
 import { useAuth } from '../hooks/useAuth';
+import axios from 'axios';  // Import axios for API calls
 
 export function SignUp() {
-  const { handleSignup, isLoading, errors } = useAuth();
+  const { handleSignup, isLoading, errors } = useAuth(); // Custom hook for handling signup logic (can be used for frontend state management)
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [apiError, setApiError] = useState<string | null>(null);  // State to store API errors
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handle form submit
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleSignup({ name, email, password });
+
+    // Reset any previous API error
+    setApiError(null);
+
+    try {
+      // Make API call to the backend signup route
+      const response = await axios.post('http://localhost:5001/signup', { name, email, password });
+
+      // Handle success - trigger success action like redirecting or setting state
+      console.log('Signup successful:', response.data);
+      // Optionally, redirect user after signup
+      // history.push('/login'); // if you are using react-router
+
+    } catch (error: any) {
+      // Handle API error
+      if (error.response && error.response.data) {
+        setApiError(error.response.data.message);  // Display error from the backend
+      } else {
+        setApiError('An unexpected error occurred. Please try again.');
+      }
+    }
   };
 
   return (
     <AuthLayout title="Create your account">
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {/* Display any general API errors */}
+        {apiError && (
+          <div className="rounded-md bg-red-50 p-4">
+            <p className="text-sm text-red-700">{apiError}</p>
+          </div>
+        )}
+
+        {/* Display validation errors if any */}
         {errors.general && (
           <div className="rounded-md bg-red-50 p-4">
             <p className="text-sm text-red-700">{errors.general}</p>
@@ -27,6 +58,7 @@ export function SignUp() {
         )}
 
         <div className="space-y-4">
+          {/* Full Name Input */}
           <FormInput
             id="name"
             name="name"
@@ -39,6 +71,7 @@ export function SignUp() {
             error={errors.name}
           />
 
+          {/* Email Input */}
           <FormInput
             id="email-address"
             name="email"
@@ -52,6 +85,7 @@ export function SignUp() {
             error={errors.email}
           />
 
+          {/* Password Input */}
           <FormInput
             id="password"
             name="password"
@@ -66,10 +100,11 @@ export function SignUp() {
           />
         </div>
 
+        {/* Submit Button */}
         <SubmitButton
           text="Sign up"
           icon={UserPlus}
-          isLoading={isLoading}
+          isLoading={isLoading}  // Indicates whether the signup request is in progress
         />
 
         <div className="text-center">

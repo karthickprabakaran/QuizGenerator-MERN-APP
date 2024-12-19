@@ -1,31 +1,85 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { AuthLayout } from '../components/auth/AuthLayout';
 import { FormInput } from '../components/auth/FormInput';
 import { SubmitButton } from '../components/auth/SubmitButton';
-import { useAuth } from '../hooks/useAuth';
+import axios from 'axios';
 
 export function Login() {
-  const { handleLogin, isLoading, errors } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({ general: '', email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(''); // Success message state
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleLogin({ email, password });
+    setIsLoading(true);
+    setErrors({ general: '', email: '', password: '' });
+    setSuccessMessage(''); // Reset success message on each attempt
+  
+    try {
+      const response = await axios.post('http://localhost:5001/login', {
+        email,
+        password,
+      });
+  
+      console.log('Response from server:', response.data); // Log the response data to check if the server sends the expected response
+  
+      if (response.status === 200) {
+        // On success, set the success message
+        setSuccessMessage('Login successful!');
+        
+        // Redirect to a dashboard or home page after successful login
+        setTimeout(() => {
+          navigate('/'); // Example redirection after login
+        }, 1500); // Allow time to show success message before redirection
+      }
+    } catch (error: any) {
+      console.error('Error occurred:', error);
+  
+      // Handle Axios error
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // Server responded with an error code
+          console.log('Error response from server:', error.response.data);
+          setErrors({ ...errors, general: error.response.data.message || 'Unexpected error' });
+        } else if (error.request) {
+          // Request was made but no response was received
+          setErrors({ ...errors, general: 'No response from server' });
+        } else {
+          // Something else went wrong
+          setErrors({ ...errors, general: 'Unexpected error occurred' });
+        }
+      } else {
+        setErrors({ ...errors, general: 'Unexpected error occurred' });
+      }
+    } finally {
+      setIsLoading(false); // Turn off the loading spinner
+    }
   };
 
   return (
     <AuthLayout title="Sign in to your account">
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {/* Display any general API errors */}
         {errors.general && (
           <div className="rounded-md bg-red-50 p-4">
             <p className="text-sm text-red-700">{errors.general}</p>
           </div>
         )}
 
+        {/* Display the success message */}
+        {successMessage && (
+          <div className="rounded-md bg-green-50 p-4">
+            <p className="text-sm text-green-700">{successMessage}</p>
+          </div>
+        )}
+
         <div className="space-y-4">
+          {/* Email Input */}
           <FormInput
             id="email-address"
             name="email"
@@ -39,6 +93,7 @@ export function Login() {
             error={errors.email}
           />
 
+          {/* Password Input */}
           <FormInput
             id="password"
             name="password"
@@ -73,11 +128,8 @@ export function Login() {
           </div>
         </div>
 
-        <SubmitButton
-          text="Sign in"
-          icon={LogIn}
-          isLoading={isLoading}
-        />
+        {/* Submit Button */}
+        <SubmitButton text="Sign in" icon={LogIn} isLoading={isLoading}/>
 
         <div className="text-center">
           <Link
