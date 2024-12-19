@@ -1,50 +1,30 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Layout } from './components/Layout'; // Layout for consistent structure
-import { Home } from './pages/Home';
-import { Login } from './pages/Login';
-import { SignUp } from './pages/SignUp';
-import { Profile } from './pages/Profile';
-import { CreateQuiz } from './pages/CreateQuiz';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Layout } from './components/Layout';  // Import the Layout component
+import LandingPage from './pages/Landing';  // Ensure this is the correct import
+import { Login } from './pages/Login';  // Import Login component
+import { Profile } from './pages/Profile';  // Import Profile component
+import { useAuthStore } from './store/authStore';  // Assuming your auth store is set up here
 import { TakeQuiz } from './pages/TakeQuiz';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import LandingPage from './pages/Landing';
+import { CreateQuiz } from './pages/CreateQuiz';
+import { SignUp } from './pages/SignUp';
 
-function App() {
+
+const App = () => {
+  const { isAuthenticated } = useAuthStore();  // Get authentication status
+
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        {/* Root route */}
-        <Route path="/" element={<Layout />}>
-          {/* LandingPage should be the default page */}
-          <Route index element={<LandingPage />} />  {/* Index route to render LandingPage */}
-          
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/takequiz" element={<TakeQuiz />} />
+        <Route path="/createquiz" element={<CreateQuiz />} />
 
-          {/* Protected Routes */}
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/create"
-            element={
-              <ProtectedRoute>
-                <CreateQuiz />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/quiz/:id" element={<TakeQuiz />} />
-        </Route>
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
-}
+};
 
 export default App;

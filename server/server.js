@@ -7,7 +7,7 @@ const app = express();
 
 // Middleware setup
 app.use(bodyParser.json()); // Middleware to parse JSON requests
-app.use(cors()); // Enable CORS for all routes
+app.use(cors()); // Enable CORS for all routes (customize as needed)
 
 // Setup PostgreSQL connection
 const pool = new Pool({
@@ -33,8 +33,8 @@ app.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
   
     // Validate name, email, and password
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+    if (!email || !password || !name) {
+      return res.status(400).json({ message: 'Name, email, and password are required' });
     }
   
     try {
@@ -42,7 +42,7 @@ app.post('/signup', async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
   
       // Insert user into the database (including name)
-      const result = await db.query(
+      const result = await pool.query(
         'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
         [name, email, hashedPassword]
       );
@@ -55,13 +55,16 @@ app.post('/signup', async (req, res) => {
       console.error('Error during signup:', error);
       res.status(500).json({ message: 'An error occurred while creating the account' });
     }
-  });
-  
-  
+});
 
 // Login endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
+  // Validate email and password
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
 
   try {
     // Query to get the user from the database by email

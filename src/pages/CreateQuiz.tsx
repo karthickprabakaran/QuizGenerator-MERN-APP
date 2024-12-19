@@ -9,8 +9,8 @@ import { QuestionEditor } from '../components/quiz/QuestionEditor';
 
 export function CreateQuiz() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
-  const { addQuiz } = useQuizStore();
+  const { user, isAuthenticated } = useAuthStore(); // Access authentication state
+  const { addQuiz } = useQuizStore(); // Access quiz store
   const [quiz, setQuiz] = useState<Partial<Quiz>>({
     title: '',
     description: '',
@@ -54,8 +54,15 @@ export function CreateQuiz() {
   };
 
   const handleSaveQuiz = () => {
-    if (!user || !quiz.title || !quiz.questions?.length) return;
-
+    // Log to check the current state of quiz, etc.
+    console.log('quiz:', quiz);
+  
+    // Check if the quiz title and questions are provided
+    if (!quiz.title || !quiz.questions?.length) {
+      console.log('Form is incomplete');
+      return;
+    }
+  
     const newQuiz: Quiz = {
       id: crypto.randomUUID(),
       title: quiz.title,
@@ -63,12 +70,22 @@ export function CreateQuiz() {
       category: quiz.category || 'General',
       displayMode: quiz.displayMode || 'all',
       questions: quiz.questions,
-      createdBy: user.id,
+      createdBy: user?.id || 'anonymous', // Set as 'anonymous' or any default value if user is not authenticated
     };
-
-    addQuiz(newQuiz);
-    navigate('/');
+  
+    // Log to ensure quiz is being created correctly
+    console.log('New quiz to be saved:', newQuiz);
+  
+    // Add quiz to store
+    addQuiz(newQuiz); // Save quiz to the store
+  
+    // Confirm quiz is added
+    console.log('Quiz added to store:', newQuiz);
+  
+    // Redirect to home page
+    navigate('/takequiz');
   };
+  
 
   return (
     <div className="max-w-3xl mx-auto">

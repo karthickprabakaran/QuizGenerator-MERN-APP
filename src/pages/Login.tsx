@@ -11,55 +11,94 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ general: '', email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(''); // Success message state
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { general: '', email: '', password: '' };
+
+    // Basic form validation
+    if (!email) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    }
+
+    if (!password) {
+      newErrors.password = 'Password is required';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Reset errors and success message before submission
     setIsLoading(true);
     setErrors({ general: '', email: '', password: '' });
-    setSuccessMessage(''); // Reset success message on each attempt
+    setSuccessMessage('');
+  
+    // Validate form fields before proceeding
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
   
     try {
-      const response = await axios.post('http://localhost:5001/Profile', {
+      // Make the login API call
+      const response = await axios.post('http://localhost:5001/login', {
         email,
         password,
       });
   
-      console.log('Response from server:', response.data); // Log the response data to check if the server sends the expected response
-  
       if (response.status === 200) {
-        // On success, set the success message
+        // Check if login response contains specific success data, e.g., a token or user info
         setSuccessMessage('Login successful!');
-        
-        // Redirect to a dashboard or home page after successful login
+        console.log('Login successful'); // For debugging
+  
+        // Set a timeout for redirection
         setTimeout(() => {
-          navigate('/'); // Example redirection after login
-        }, 1500); // Allow time to show success message before redirection
+          console.log('Navigating based on email domain'); // For debugging
+  
+          // Check if email contains 'saveetha.in'
+          if (email.includes('saveetha.in')) {
+            navigate('/createQuiz');  // Redirect to createQuiz route
+          } else {
+            navigate('/takequiz');  // Redirect to takequiz route
+          }
+        }, 1500); // Redirect after success message shows for 1.5 seconds
+      } else {
+        // Handle case if the login is successful but with a non-200 status code
+        setErrors({ ...errors, general: 'Unexpected error occurred' });
       }
     } catch (error: any) {
       console.error('Error occurred:', error);
   
-      // Handle Axios error
       if (axios.isAxiosError(error)) {
         if (error.response) {
           // Server responded with an error code
-          console.log('Error response from server:', error.response.data);
-          setErrors({ ...errors, general: error.response.data.message || 'Unexpected error' });
+          setErrors({
+            ...errors,
+            general: error.response.data.message || 'Unexpected error',
+          });
         } else if (error.request) {
-          // Request was made but no response was received
+          // Request was made but no response received
           setErrors({ ...errors, general: 'No response from server' });
         } else {
-          // Something else went wrong
+          // Other errors (e.g., malformed request)
           setErrors({ ...errors, general: 'Unexpected error occurred' });
         }
       } else {
         setErrors({ ...errors, general: 'Unexpected error occurred' });
       }
     } finally {
-      setIsLoading(false); // Turn off the loading spinner
+      setIsLoading(false);
     }
   };
+  
 
   return (
     <AuthLayout title="Sign in to your account">
@@ -71,7 +110,7 @@ export function Login() {
           </div>
         )}
 
-        {/* Display the success message */}
+        {/* Display success message */}
         {successMessage && (
           <div className="rounded-md bg-green-50 p-4">
             <p className="text-sm text-green-700">{successMessage}</p>
@@ -129,7 +168,7 @@ export function Login() {
         </div>
 
         {/* Submit Button */}
-        <SubmitButton text="Sign in" icon={LogIn} isLoading={isLoading}/>
+        <SubmitButton text="Sign in" icon={LogIn} isLoading={isLoading} />
 
         <div className="text-center">
           <Link
