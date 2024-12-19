@@ -1,42 +1,51 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Use useNavigate for navigation
 import { UserPlus } from 'lucide-react';
 import { AuthLayout } from '../components/auth/AuthLayout';
 import { FormInput } from '../components/auth/FormInput';
 import { SubmitButton } from '../components/auth/SubmitButton';
-import { useAuth } from '../hooks/useAuth';
-import axios from 'axios';  // Import axios for API calls
+import axios from 'axios';
 
 export function SignUp() {
-  const { handleSignup, isLoading, errors } = useAuth(); // Custom hook for handling signup logic (can be used for frontend state management)
-  const [name, setName] = useState('');
+  const [name, setName] = useState(''); // State for name
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [apiError, setApiError] = useState<string | null>(null);  // State to store API errors
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // State for success message
+  const navigate = useNavigate(); // For navigation
 
-  // Handle form submit
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Reset any previous API error
-    setApiError(null);
-
+    setApiError(null); // Clear previous error
+    setIsLoading(true); // Start loading
+  
     try {
-      // Make API call to the backend signup route
-      const response = await axios.post('http://localhost:5001/signup', { name, email, password });
-
-      // Handle success - trigger success action like redirecting or setting state
+      // Send name, email, and password to the backend
+      const response = await axios.post('http://localhost:5001/signup', {
+        name,
+        email,
+        password,
+      });
+  
+      // Handle success
       console.log('Signup successful:', response.data);
-      // Optionally, redirect user after signup
-      // history.push('/login'); // if you are using react-router
-
+      setSuccessMessage('Signup successful! Redirecting to login page...');
+      
+      // Redirect after 3 seconds to give time for the success message to be visible
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000); 
     } catch (error: any) {
       // Handle API error
       if (error.response && error.response.data) {
-        setApiError(error.response.data.message);  // Display error from the backend
+        setApiError(error.response.data.message);
       } else {
         setApiError('An unexpected error occurred. Please try again.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,25 +59,23 @@ export function SignUp() {
           </div>
         )}
 
-        {/* Display validation errors if any */}
-        {errors.general && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-700">{errors.general}</p>
+        {/* Display success message */}
+        {successMessage && (
+          <div className="rounded-md bg-green-50 p-4">
+            <p className="text-sm text-green-700">{successMessage}</p>
           </div>
         )}
 
         <div className="space-y-4">
-          {/* Full Name Input */}
+          {/* Name Input */}
           <FormInput
             id="name"
             name="name"
             type="text"
-            required
-            label="Full name"
-            placeholder="Full name"
+            label="Full Name"
+            placeholder="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            error={errors.name}
           />
 
           {/* Email Input */}
@@ -82,7 +89,6 @@ export function SignUp() {
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={errors.email}
           />
 
           {/* Password Input */}
@@ -96,7 +102,6 @@ export function SignUp() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={errors.password}
           />
         </div>
 
@@ -104,7 +109,7 @@ export function SignUp() {
         <SubmitButton
           text="Sign up"
           icon={UserPlus}
-          isLoading={isLoading}  // Indicates whether the signup request is in progress
+          isLoading={isLoading}
         />
 
         <div className="text-center">

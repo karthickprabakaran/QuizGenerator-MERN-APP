@@ -20,7 +20,7 @@ function App() {
           <Route path="signup" element={<SignUp />} />
           <Route path="profile" element={<Profile />} />
 
-          <Route
+          <Route  
             path="profile"
             element={
               <ProtectedRoute>

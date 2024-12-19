@@ -30,42 +30,34 @@ pool
 
 // Sign-up endpoint
 app.post('/signup', async (req, res) => {
-
-    console.log("signup request reveived");
-    
-  const { name, email, password } = req.body;
-
-  // Basic validation
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: 'Name, email, and password are required' });
-  }
-
-  try {
-    // Check if user already exists
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (result.rows.length > 0) {
-      return res.status(400).json({ message: 'User already exists' });
+    const { name, email, password } = req.body;
+  
+    // Validate name, email, and password
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
     }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10); // Salt rounds = 10
-
-    // Insert new user into the database
-    const insertResult = await pool.query(
-      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id',
-      [name, email, hashedPassword]
-    );
-
-    // Respond with a success message
-    return res.status(201).json({
-      message: 'User registered successfully!',
-      userId: insertResult.rows[0].id,
-    });
-  } catch (err) {
-    console.error('Error during signup:', err);
-    return res.status(500).json({ message: 'An unexpected error occurred' });
-  }
-});
+  
+    try {
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Insert user into the database (including name)
+      const result = await db.query(
+        'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
+        [name, email, hashedPassword]
+      );
+  
+      res.status(201).json({
+        message: 'User created successfully',
+        user: result.rows[0],
+      });
+    } catch (error) {
+      console.error('Error during signup:', error);
+      res.status(500).json({ message: 'An error occurred while creating the account' });
+    }
+  });
+  
+  
 
 // Login endpoint
 app.post('/login', async (req, res) => {
