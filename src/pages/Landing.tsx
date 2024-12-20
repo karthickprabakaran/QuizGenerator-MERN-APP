@@ -20,9 +20,9 @@ const LandingPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-white">SmartQuiz</h1>
           <nav>
             <ul className="flex space-x-8">
-              <li><a href="http://localhost:5173/login" target='_blank' className="text-white text-xl font-semibold hover:text-yellow-400">About</a></li> {/* Updated to /login */}
-              <li><a href="#features" className="text-white text-xl font-semibold hover:text-yellow-400">Features</a></li>
-              <li><a href="#contact" className="text-white text-xl font-semibold hover:text-yellow-400">Contact</a></li>
+              <li><a href="http://localhost:5173/about" target='_blank' className="text-white text-xl font-semibold hover:text-yellow-400">About</a></li> {/* Updated to /login */}
+              <li><a href="http://localhost:5173/features" target='_blank' className="text-white text-xl font-semibold hover:text-yellow-400">Features</a></li>
+              <li><a href="http://localhost:5173/login" target='_blank' className="text-white text-xl font-semibold hover:text-yellow-400">Login</a></li>
             </ul>
           </nav>
         </div>

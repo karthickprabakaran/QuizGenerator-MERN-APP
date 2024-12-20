@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [usersData, setUsersData] = useState<{ name: string; email: string; rank: string }[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // Initialize the navigate hook
 
   useEffect(() => {
     fetchUserRanks();
@@ -64,6 +66,14 @@ const Dashboard = () => {
           </table>
         </div>
       )}
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={() => navigate('/')} // Navigate to the home route
+          className="inline-flex items-center px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Go to Home
+        </button>
+      </div>
     </div>
   );
 };

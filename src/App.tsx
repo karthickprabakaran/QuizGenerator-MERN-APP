@@ -12,6 +12,8 @@ import { AttendQuiz } from './pages/AttendQuiz';
 import { ComputerQuiz } from './pages/computer';
 import { DSAQuiz } from './pages/DSA';
 import Dashboard from './pages/Dashboard';
+import About from './pages/About';
+import Features from './pages/Features';
 
 
 const App = () => {
@@ -32,6 +34,8 @@ const App = () => {
         <Route path="/computer" element={<ComputerQuiz />} />
         <Route path="/dsa" element={<DSAQuiz />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/features" element={<Features />} />
 
 
 

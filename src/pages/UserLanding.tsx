@@ -89,12 +89,44 @@ export function UserLanding() {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Available Quizzes</h1>
+    <div className="bg-gray-100 min-h-screen flex flex-col items-center py-12">
+      {/* Updated Header */}
+      <header className="absolute top-0 left-0 right-0 z-20 bg-transparent py-4 px-8">
+        <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-indigo-600">Quiz Portal</h1>
+        <nav>
+            <ul className="flex space-x-8">
+              <li>
+                <Link to="/" target='_new' className=" text-xl text-indigo-600 font-semibold hover:text-yellow-400 ">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" target='_new' className="text-indigo-600 text-xl font-semibold hover:text-yellow-400 ">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link to="/features" target='_new' className="text-indigo-600 text-xl font-semibold hover:text-yellow-400 ">
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard" target='_new' className="text-indigo-600 text-xl font-semibold hover:text-yellow-400 ">
+                  Dashboard
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
 
-      <div className="space-y-4">
+      {/* Quizzes Section */}
+      <div className="w-full max-w-3xl space-y-6 mt-16">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Available Quizzes</h2>
+        
         {quizzes.length === 0 ? (
-          <p>Loading quizzes... or no quizzes available at the moment.</p>
+          <p className="text-gray-700 text-center">Loading quizzes... or no quizzes available at the moment.</p>
         ) : (
           quizzes.map((quiz) => {
             // Determine redirection path based on quiz ID
@@ -106,13 +138,13 @@ export function UserLanding() {
                 : `/dsa`; // Redirect to DS & Algo for quiz ID 3
 
             return (
-              <div key={quiz.id} className="border p-4 rounded-md shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-900">{quiz.title}</h3>
-                <p className="text-gray-600">{quiz.description}</p>
-                <div className="flex justify-between items-center mt-4">
+              <div key={quiz.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2">{quiz.title}</h3>
+                <p className="text-gray-600 mb-4">{quiz.description}</p>
+                <div className="flex justify-center">
                   <Link
                     to={redirectPath}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                    className="px-5 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors duration-200"
                   >
                     Attend Quiz
                   </Link>
